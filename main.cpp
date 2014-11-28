@@ -1,7 +1,8 @@
-#include <boost/asio.hpp>
 #include <iostream>
 
-#include "tcp_server.h"
+#include <boost/asio.hpp>
+
+#include "Server.h"
 
 int main()
 {
@@ -9,7 +10,7 @@ int main()
 	{
 		boost::asio::io_service io_service;
 
-		tcp_server server(io_service, 7171);
+		Server server(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 7171));
 		io_service.run();
 	}
 	catch (std::exception& e)
