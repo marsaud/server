@@ -18,6 +18,8 @@ void Room::join(Session::chat_session_ptr participant)
 	// On informe les sessions de la room
 	UpMessage e;
 	e.m_type = UpMessage::PERSON_CONNECTED;
+	e.m_login = "Anonymous";
+	e.m_message = "Welcome";
 	deliver(e);
 }
 
@@ -26,6 +28,8 @@ void Room::leave(Session::chat_session_ptr participant)
 	// On informe les sessions de la room // (2)
 	UpMessage e;
 	e.m_type = UpMessage::PERSON_LEFT;
+	e.m_login = "Anonymous";
+	e.m_message = "Good Bye";
 	deliver(e);
 
 	m_participants.erase(participant);// puis on le détruit

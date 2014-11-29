@@ -13,19 +13,16 @@
 class Server
 {
 public:
-    Server(boost::asio::io_service& io_service, const boost::asio::ip::tcp::endpoint& endpoint);
+    Server(boost::asio::io_service& io_service, int port);
     virtual ~Server();
 
-    typedef boost::shared_ptr<Room> chat_room_ptr;
-
-    void wait_for_connection();
 protected:
 private:
-    void handle_accept(const boost::system::error_code& error, connection_ptr);
+    void wait_for_connection();
+    void handle_accept(Connection::connection_ptr connection, const boost::system::error_code& error);
 
-    boost::asio::io_service& m_io_service;
     boost::asio::ip::tcp::acceptor m_acceptor;
-    chat_room_ptr m_room;
+    boost::shared_ptr<Room> m_room;
 };
 
 #endif // SERVER_H

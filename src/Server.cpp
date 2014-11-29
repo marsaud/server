@@ -1,11 +1,10 @@
 #include "Server.h"
 
-Server::Server(boost::asio::io_service& io_service, const boost::asio::ip::tcp::endpoint& endpoint) : m_io_service(io_service),
-    m_acceptor(io_service, endpoint),
-    m_room(new Room(/* *this*/))
+Server::Server(boost::asio::io_service& io_service, int port) :
+    m_acceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+    m_room(new Room())
 {
-    std::cout << "Creation d'un serveur " << std::endl;
-
+    std::cout << "Server start" << std::endl;
     wait_for_connection();
 }
 
@@ -17,21 +16,28 @@ Server::~Server()
 // Attente d'un nouveau client
 void Server::wait_for_connection()
 {
-    connection_ptr connection(new Connection(m_io_service));
+    Connection::connection_ptr connection = Connection::create(m_acceptor.get_io_service());
+// Attente d'une nouvelle connexion
+    m_acceptor.async_accept(
+        connection->socket(),
+        boost::bind(
+            &Server::handle_accept,
+            this,
+            connection,
+            boost::asio::placeholders::error
+        )
+    );
 
-    // Attente d'une nouvelle connection
-    m_acceptor.async_accept(connection->socket(),
-                            boost::bind(&Server::handle_accept, this,
-                                        boost::asio::placeholders::error,
-                                        connection)
-                           );
+    std::cout << "Listening" << std::endl;
 }
 
-void Server::handle_accept(const boost::system::error_code& error, connection_ptr connection)
+void Server::handle_accept(Connection::connection_ptr connection, const boost::system::error_code& error)
 {
+    std::cerr << error.message() << std::endl;
+
     if (!error)
     {
-        std::cout << "Connection acceptée " << std::endl;
+        std::cout << "Connection accepted " << std::endl;
 
         /** @todo la room est injectée dans la session, mais la session doit être repassée à le room pour le join...creuser ça. */
         chat_session_ptr session = Session::create(connection, m_room);
@@ -40,6 +46,6 @@ void Server::handle_accept(const boost::system::error_code& error, connection_pt
     }
     else
     {
-        std::cerr << "Connection refusée : " << error.message() << std::endl;
+        std::cerr << "Connection rejected : " << error.message() << std::endl;
     }
 }

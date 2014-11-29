@@ -21,7 +21,7 @@ public:
     typedef boost::shared_ptr<Room> chat_room_ptr;
     typedef boost::weak_ptr<Room> chat_room_wptr;
 
-    static chat_session_ptr create(connection_ptr tcp_connection, chat_room_ptr room)
+    static chat_session_ptr create(Connection::connection_ptr tcp_connection, chat_room_ptr room)
     {
         chat_session_ptr session(new Session(tcp_connection, room));
         session->wait_for_data();
@@ -32,13 +32,13 @@ public:
 
 protected:
 private:
-    Session(connection_ptr tcp_connection, chat_room_ptr room);
+    Session(Connection::connection_ptr tcp_connection, chat_room_ptr room);
     void wait_for_data();
 
     void handle_write(const boost::system::error_code& error);
     void handle_read(const boost::system::error_code& error);
 
-    connection_ptr m_tcp_connection;
+    Connection::connection_ptr m_tcp_connection;
     chat_room_wptr m_room;
     UpMessage m_message;
 

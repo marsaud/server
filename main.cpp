@@ -10,7 +10,7 @@ int main()
 	{
 		boost::asio::io_service io_service;
 
-		Server server(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 7171));
+		Server server(io_service, 7171);
 		io_service.run();
 	}
 	catch (std::exception& e)
