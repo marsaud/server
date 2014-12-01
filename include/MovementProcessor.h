@@ -1,7 +1,6 @@
 #ifndef MOVEMENTPROCESSOR_H
 #define MOVEMENTPROCESSOR_H
 
-#include "oq.h"
 #include "Player.h"
 #include "StaticWorld.h"
 #include "TileSetLoader.h"
@@ -17,7 +16,7 @@ public:
     static void init();
     static void free();
 
-    void move(oq::Move & move, Player & player, StaticWorld* world);
+    void move(Player::Move & move, Player & player, StaticWorld* world);
 
 protected:
 private:

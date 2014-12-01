@@ -14,13 +14,13 @@ MovementProcessor::~MovementProcessor()
 
 void MovementProcessor::init()
 {
-    ms_movements = new Movement[oq::MOVE_LIST_SIZE];
+    ms_movements = new Movement[Player::MOVE_LIST_SIZE];
 
-    ms_movements[oq::MOVE_NOT] = {0,0};
-    ms_movements[oq::MOVE_RIGHT] = {1,0};
-    ms_movements[oq::MOVE_LEFT] = {-1,0};
-    ms_movements[oq::MOVE_UP] = {0,-1};
-    ms_movements[oq::MOVE_DOWN] = {0,1};
+    ms_movements[Player::MOVE_NOT] = {0,0};
+    ms_movements[Player::MOVE_RIGHT] = {1,0};
+    ms_movements[Player::MOVE_LEFT] = {-1,0};
+    ms_movements[Player::MOVE_UP] = {0,-1};
+    ms_movements[Player::MOVE_DOWN] = {0,1};
 }
 
 void MovementProcessor::free()
@@ -29,9 +29,9 @@ void MovementProcessor::free()
     ms_movements = NULL;
 }
 
-void MovementProcessor::move(oq::Move & move, Player & player, StaticWorld* world)
+void MovementProcessor::move(Player::Move & move, Player & player, StaticWorld* world)
 {
-    if (oq::MOVE_NOT != move)
+    if (Player::MOVE_NOT != move)
     {
         Position previewTile = player.m_tile;
         Position previewZone = player.m_zone;
@@ -42,22 +42,22 @@ void MovementProcessor::move(oq::Move & move, Player & player, StaticWorld* worl
             previewZone += ms_movements[move];
             if (m_outOfSet(previewZone, world->getArea(player.m_area)->getZoneSet()))
             {
-                move = oq::MOVE_NOT;
+                move = Player::MOVE_NOT;
             }
             else
             {
                 switch(move)
                 {
-                case oq::MOVE_RIGHT:
+                case Player::MOVE_RIGHT:
                     previewTile.x = 0;
                     break;
-                case oq::MOVE_DOWN:
+                case Player::MOVE_DOWN:
                     previewTile.y = 0;
                     break;
-                case oq::MOVE_LEFT:
+                case Player::MOVE_LEFT:
                     previewTile.x = world->getArea(player.m_area)->getZone(previewZone)[previewTile.y].size() - 1;
                     break;
-                case oq::MOVE_UP:
+                case Player::MOVE_UP:
                     previewTile.y = world->getArea(player.m_area)->getZone(previewZone).size() - 1;
                     break;
                 default:
@@ -66,12 +66,12 @@ void MovementProcessor::move(oq::Move & move, Player & player, StaticWorld* worl
 
                 if (m_outOfSet(previewTile, world->getArea(player.m_area)->getZone(player.m_zone)))
                 {
-                    move = oq::MOVE_NOT;
+                    move = Player::MOVE_NOT;
                 }
             }
         }
 
-        if (oq::MOVE_NOT != move)
+        if (Player::MOVE_NOT != move)
         {
             TileSetLoader::Tile tile = world->getArea(player.m_area)->getZone(previewZone)[previewTile.y][previewTile.x];
             switch (tile)
@@ -87,12 +87,12 @@ void MovementProcessor::move(oq::Move & move, Player & player, StaticWorld* worl
             case TileSetLoader::TILE_WATER:
             case TileSetLoader::TILE_NONE:
             default:
-                move = oq::MOVE_NOT;
+                move = Player::MOVE_NOT;
                 break;
 
             }
 
-            if (oq::MOVE_NOT != move)
+            if (Player::MOVE_NOT != move)
             {
                 player.m_zone = previewZone;
                 player.m_tile = previewTile;
