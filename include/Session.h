@@ -8,6 +8,7 @@
 
 #include "Connection.h"
 #include "UpMessage.h"
+#include "DownMessage.h"
 #include "Room.h"
 
 class Room;
@@ -28,7 +29,7 @@ public:
         return session;
     }
 
-    void deliver(const UpMessage& msg);
+    void deliver(const DownMessage& msg);
 
 protected:
 private:
@@ -40,7 +41,8 @@ private:
 
     Connection::connection_ptr m_tcp_connection;
     chat_room_wptr m_room;
-    UpMessage m_message;
+    UpMessage m_upMessage;
+    DownMessage m_DownMessage;
 
     bool is_leaving;
 };

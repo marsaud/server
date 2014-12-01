@@ -19,7 +19,7 @@ public:
 
     void join(chat_session_ptr participant);
     void leave(chat_session_ptr participant);
-    void deliver(const UpMessage& msg);
+    void deliver(const DownMessage& msg);
 
 protected:
 private:

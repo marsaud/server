@@ -17,7 +17,7 @@ void Session::wait_for_data()
 {
     // On lance l'écoute d'événements
     m_tcp_connection->async_read(
-        m_message,
+        m_upMessage,
         boost::bind(
             &Session::handle_read,
             shared_from_this(),
@@ -33,12 +33,18 @@ void Session::handle_read(const boost::system::error_code &error)
     {
         if (!error)
         {
-            // On demande à la room de transmettre le message à tout le monde
-            room->deliver(m_message);
+            m_upMessage;
 
             /** @todo Ici, on traiter le message entrant, modifier le modèle,
              * puis rediffuser le modèle à jour à tous les clients
              */
+
+            m_DownMessage.reset();
+            m_DownMessage.m_type = DownMessage::WORLD_STATE;
+
+
+            // On demande à la room de transmettre le message à tout le monde
+            room->deliver(m_DownMessage);
 
             // On relance une écoute
             wait_for_data();
@@ -55,7 +61,7 @@ void Session::handle_read(const boost::system::error_code &error)
     }
 }
 
-void Session::deliver(const UpMessage& msg)
+void Session::deliver(const DownMessage& msg)
 {
     m_tcp_connection->async_write(msg,
                                   boost::bind(&Session::handle_write, shared_from_this(),

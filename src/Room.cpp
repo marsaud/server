@@ -15,27 +15,27 @@ void Room::join(Session::chat_session_ptr participant)
 {
 	m_participants.insert(participant);
 
-	// On informe les sessions de la room
-	UpMessage e;
-	e.m_type = UpMessage::PERSON_CONNECTED;
-	e.m_login = "Anonymous";
-	e.m_message = "Welcome";
+    /** @todo Handle player arrival */
+
+	DownMessage e;
+    e.m_type = DownMessage::PLAYER_CONNECTED;
+    e.m_info = "New player entered";
+
 	deliver(e);
 }
 
 void Room::leave(Session::chat_session_ptr participant)
 {
 	// On informe les sessions de la room // (2)
-	UpMessage e;
-	e.m_type = UpMessage::PERSON_LEFT;
-	e.m_login = "Anonymous";
-	e.m_message = "Good Bye";
+	DownMessage e;
+	e.m_type = DownMessage::PLAYER_LEFT;
+	e.m_info = "A player left";
 	deliver(e);
 
 	m_participants.erase(participant);// puis on le détruit
 }
 
-void Room::deliver(const UpMessage& msg)
+void Room::deliver(const DownMessage& msg)
 {
 	std::for_each(m_participants.begin(), m_participants.end(),
 		boost::bind(&Session::deliver, _1, boost::ref(msg)));
