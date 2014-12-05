@@ -101,12 +101,12 @@ void MovementProcessor::move(Player::Move & move, Player & player, StaticWorld* 
     }
 }
 
-bool MovementProcessor::m_outOfSet(Position const& pos, TileSetLoader::TileSet const& tileSet) const
+bool MovementProcessor::m_outOfSet(Position const& pos, TileSetLoader::TileSet const& tileSet)
 {
     return ((pos.x < 0) || (pos.y < 0) || (pos.y >= tileSet.size()) || (pos.x >= tileSet[pos.y].size()));
 }
 
-bool MovementProcessor::m_outOfSet(Position const& pos, ZoneSetLoader::ZoneSet const& zoneSet) const
+bool MovementProcessor::m_outOfSet(Position const& pos, ZoneSetLoader::ZoneSet const& zoneSet)
 {
     return ((pos.x < 0) || (pos.y < 0) || (pos.y >= zoneSet.size()) || (pos.x >= zoneSet[pos.y].size()));
 }

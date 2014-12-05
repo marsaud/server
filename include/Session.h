@@ -10,6 +10,10 @@
 #include "UpMessage.h"
 #include "DownMessage.h"
 #include "Room.h"
+#include "MovementProcessor.h"
+#include "ActionProcessor.h"
+#include "Player.h"
+#include "ZoneLinker.h"
 
 class Room;
 
@@ -22,14 +26,10 @@ public:
     typedef boost::shared_ptr<Room> chat_room_ptr;
     typedef boost::weak_ptr<Room> chat_room_wptr;
 
-    static chat_session_ptr create(Connection::connection_ptr tcp_connection, chat_room_ptr room)
-    {
-        chat_session_ptr session(new Session(tcp_connection, room));
-        session->wait_for_data();
-        return session;
-    }
+    static chat_session_ptr create(Connection::connection_ptr tcp_connection, chat_room_ptr room);
 
     void deliver(const DownMessage& msg);
+    Player& getPlayer();
 
 protected:
 private:
@@ -41,6 +41,9 @@ private:
 
     Connection::connection_ptr m_tcp_connection;
     chat_room_wptr m_room;
+
+    Player m_player;
+
     UpMessage m_upMessage;
     DownMessage m_DownMessage;
 

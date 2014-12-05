@@ -32,3 +32,4 @@ bin/
 *.cbp
 *.layout
 *.depend
+*.cscope_file_list

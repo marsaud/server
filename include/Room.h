@@ -5,6 +5,7 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
+#include "StaticWorld.h"
 #include "UpMessage.h"
 #include "Session.h"
 
@@ -19,12 +20,15 @@ public:
 
     void join(chat_session_ptr participant);
     void leave(chat_session_ptr participant);
-    void deliver(const DownMessage& msg);
+    void deliver(DownMessage& msg);
+    StaticWorld* getWorld() const;
 
 protected:
 private:
     std::set<chat_session_ptr>	m_participants;
     // Server& m_server;
+
+    StaticWorld* m_world;
 };
 
 #endif // ROOM_H

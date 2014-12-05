@@ -16,14 +16,14 @@ public:
     static void init();
     static void free();
 
-    void move(Player::Move & move, Player & player, StaticWorld* world);
+    static void move(Player::Move & move, Player & player, StaticWorld* world);
 
 protected:
 private:
     static Movement* ms_movements;
 
-    bool m_outOfSet(Position const& pos, TileSetLoader::TileSet const& tileSet) const;
-    bool m_outOfSet(Position const& pos, ZoneSetLoader::ZoneSet const& zoneSet) const;
+    static bool m_outOfSet(Position const& pos, TileSetLoader::TileSet const& tileSet);
+    static bool m_outOfSet(Position const& pos, ZoneSetLoader::ZoneSet const& zoneSet);
 };
 
 #endif // MOVEMENTPROCESSOR_H

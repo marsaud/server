@@ -5,6 +5,21 @@ Session::Session(Connection::connection_ptr tcp_connection, chat_room_ptr room)
       m_room(room)
 {
     is_leaving = false;
+
+    chat_room_ptr pRoom = m_room.lock();
+    m_player.m_area = pRoom->getWorld()->getStartArea();
+
+    const ZoneLinker::ZoneLink* startLink = pRoom->getWorld()->getArea(m_player.m_area)->getLinker()->find("start");
+    if (NULL == startLink)
+    {
+        /** @todo throw Exception */
+        std::cerr << "No start link found"  << std::endl;
+    }
+
+    m_player.m_zone = startLink->zone;
+    m_player.m_tile = startLink->tile;
+
+
     std::cout << "New session"  << std::endl;
 }
 
@@ -33,7 +48,8 @@ void Session::handle_read(const boost::system::error_code &error)
     {
         if (!error)
         {
-            m_upMessage;
+            MovementProcessor::move(m_upMessage.m_move, m_player, room->getWorld());
+            ActionProcessor::process(m_upMessage.m_action, m_player, room->getWorld());
 
             /** @todo Ici, on traiter le message entrant, modifier le modèle,
              * puis rediffuser le modèle à jour à tous les clients
@@ -41,7 +57,6 @@ void Session::handle_read(const boost::system::error_code &error)
 
             m_DownMessage.reset();
             m_DownMessage.m_type = DownMessage::WORLD_STATE;
-
 
             // On demande à la room de transmettre le message à tout le monde
             room->deliver(m_DownMessage);
@@ -69,6 +84,11 @@ void Session::deliver(const DownMessage& msg)
                                  );
 }
 
+Player& Session::getPlayer()
+{
+    return m_player;
+}
+
 void Session::handle_write(const boost::system::error_code &error)
 {
     chat_room_ptr room = m_room.lock();
@@ -77,4 +97,11 @@ void Session::handle_write(const boost::system::error_code &error)
         is_leaving = true;
         room->leave(shared_from_this() );
     }
+}
+
+chat_session_ptr Session::create(Connection::connection_ptr tcp_connection, chat_room_ptr room)
+{
+    chat_session_ptr session(new Session(tcp_connection, room));
+    session->wait_for_data();
+    return session;
 }

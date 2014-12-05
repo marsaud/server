@@ -3,12 +3,15 @@
 Room::Room(/*Server& server*/)
 // :m_server(server)
 {
+    m_world = new StaticWorld("scenario1", "data");
+    MovementProcessor::init();
 	std::cout << "New room" << std::endl;
 }
 
 Room::~Room()
 {
-    //dtor
+    MovementProcessor::free();
+    delete m_world;
 }
 
 void Room::join(Session::chat_session_ptr participant)
@@ -35,8 +38,13 @@ void Room::leave(Session::chat_session_ptr participant)
 	m_participants.erase(participant);// puis on le détruit
 }
 
-void Room::deliver(const DownMessage& msg)
+void Room::deliver(DownMessage& msg)
 {
 	std::for_each(m_participants.begin(), m_participants.end(),
 		boost::bind(&Session::deliver, _1, boost::ref(msg)));
+}
+
+StaticWorld* Room::getWorld() const
+{
+    return m_world;
 }
