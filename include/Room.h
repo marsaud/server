@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include <boost/asio.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
 #include "StaticWorld.h"
@@ -20,6 +21,7 @@ public:
 
     void join(chat_session_ptr participant);
     void leave(chat_session_ptr participant);
+    void broadcast();
     void deliver(DownMessage& msg);
     StaticWorld* getWorld() const;
 

@@ -2,15 +2,30 @@
 
 Server::Server(boost::asio::io_service& io_service, int port) :
     m_acceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
-    m_room(new Room())
+    m_room(new Room()),
+    m_timer(io_service, boost::posix_time::seconds(5))
 {
     std::cout << "Server start" << std::endl;
+    m_drive_broadcast();
     wait_for_connection();
+
 }
 
 Server::~Server()
 {
     //dtor
+}
+
+void Server::m_drive_broadcast()
+{
+    m_timer.expires_from_now(boost::posix_time::seconds(5));
+    m_timer.async_wait(boost::bind(&Server::m_broadcast, this));
+}
+
+void Server::m_broadcast()
+{
+    m_room->broadcast();
+    m_drive_broadcast();
 }
 
 // Attente d'un nouveau client
