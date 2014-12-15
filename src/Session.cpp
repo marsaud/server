@@ -48,18 +48,14 @@ void Session::handle_read(const boost::system::error_code &error)
     {
         if (!error)
         {
-            MovementProcessor::move(m_upMessage.m_move, m_player, room->getWorld());
-            ActionProcessor::process(m_upMessage.m_action, m_player, room->getWorld());
-
-            /** @todo Ici, on traiter le message entrant, modifier le modèle,
+            /** @todo Ici, traiter le message entrant, modifier le modèle,
              * puis rediffuser le modèle à jour à tous les clients
              */
 
-            m_DownMessage.reset();
-            m_DownMessage.m_type = DownMessage::WORLD_STATE;
+            MovementProcessor::move(m_upMessage.m_move, &m_player, room->getWorld());
+            ActionProcessor::process(m_upMessage.m_action, &m_player, room->getWorld());
 
-            // On demande à la room de transmettre le message à tout le monde
-            room->deliver(m_DownMessage);
+            room->broadcast();
 
             // On relance une écoute
             wait_for_data();

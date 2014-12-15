@@ -1,26 +1,37 @@
 #include "Room.h"
 
-Room::Room(/*Server& server*/)
-// :m_server(server)
+Room::Room(/*Server& server*/) :
+    // m_server(server),
+    m_playerCounter(0)
 {
     m_world = new StaticWorld("scenario1", "data");
-    MovementProcessor::init();
     std::cout << "New room" << std::endl;
 }
 
 Room::~Room()
 {
-    MovementProcessor::free();
     delete m_world;
 }
 
 void Room::join(Session::chat_session_ptr participant)
 {
+    const ZoneLinker::ZoneLink *startLink = m_world->getArea(m_world->getStartArea())->getLinker()->find("start");
+    if (NULL == startLink)
+    {
+        /** @todo throw Exception */
+    }
+
+    participant->getPlayer().m_number = ++m_playerCounter;
+    participant->getPlayer().m_zone = startLink->zone;
+    participant->getPlayer().m_tile = startLink->tile;
+
     m_participants.insert(participant);
-
-    /** @todo Handle player arrival */
-
     DownMessage e;
+    e.m_type = DownMessage::WELCOME;
+    e.m_players.push_back(participant->getPlayer());
+    participant->deliver(e);
+
+    e.reset();
     e.m_type = DownMessage::PLAYER_CONNECTED;
     e.m_info = "New player entered";
 

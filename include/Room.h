@@ -27,6 +27,7 @@ public:
 
 protected:
 private:
+    int m_playerCounter;
     std::set<chat_session_ptr>	m_participants;
     // Server& m_server;
 

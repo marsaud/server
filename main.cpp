@@ -6,6 +6,8 @@
 
 int main()
 {
+    MovementProcessor::init();
+
 	try
 	{
 		boost::asio::io_service io_service;
@@ -17,6 +19,8 @@ int main()
 	{
 		std::cerr << e.what() << std::endl;
 	}
+
+	MovementProcessor::free();
 
 	return 0;
 }

@@ -6,7 +6,7 @@ Server::Server(boost::asio::io_service& io_service, int port) :
     m_timer(io_service, boost::posix_time::seconds(5))
 {
     std::cout << "Server start" << std::endl;
-    m_drive_broadcast();
+    // m_drive_broadcast();
     wait_for_connection();
 
 }
